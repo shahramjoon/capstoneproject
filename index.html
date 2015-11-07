@@ -149,7 +149,7 @@ corpus &lt;- tm_map(corpus, removeWords, stopwords(&quot;english&quot;))
 corpus &lt;- tm_map(corpus, stemDocument)
 </code></pre>
 
-<p>Created a Matrix of 95692 * 333 for 333 words used at least in %3 of all 95692  reivews </p>
+<p>Created a Matrix of 95692 * 332 for 332 words used at least in %3 of all 95692  reivews </p>
 
 <pre><code class="r">dtm = DocumentTermMatrix(corpus)
 sparse = removeSparseTerms(dtm, 0.97) 

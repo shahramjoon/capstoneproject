@@ -99,6 +99,7 @@ Words used most: Order, Time, good, like
 ###  Building a model 
 We build a model to  show the frequency of words used across good reviews ( 4/5 Ratings) and bad reviews(0/1/2/3 Ratings)
 
+
 Created a Corpus of all words in all reviews
 
 ```r
@@ -110,7 +111,7 @@ corpus <- tm_map(corpus, content_transformer(tolower))
 corpus <- tm_map(corpus, removeWords, stopwords("english"))
 corpus <- tm_map(corpus, stemDocument)
 ```
-Created a Matrix of 95692 * 333 for 333 words used at least in %3 of all 95692  reivews 
+Created a Matrix of 95692 * 332 for 332 words used at least in %3 of all 95692  reivews 
 
 ```r
 dtm = DocumentTermMatrix(corpus)

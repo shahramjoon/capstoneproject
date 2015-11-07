@@ -238,6 +238,7 @@ wordcloud(corpus,
 ###  Building a model 
 We build a model to  show the frequency of words used across good reviews ( 4/5 Ratings) and bad reviews(0/1/2/3 Ratings)
 
+
 Created a Corpus of all words in all reviews
 ```{r corpus6, echo=TRUE , warning=FALSE}
 data <- filtered
