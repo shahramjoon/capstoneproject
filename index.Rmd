@@ -1,0 +1,319 @@
+---
+title       : Mexican Restaurant Reviews in Yelp 
+subtitle    : Do words used in Reviews matter in Review's Ratings ?
+author      : Data Scientist
+job         : Coursera Capstone Project 
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+output      : ioslides_presentation
+
+
+
+
+--- &twocol
+
+### _Mexican Restaurant businesses in Yelp Data set_
+
+
+There are 95692 reviews for 2208 Mexican Restaurants in Data Set.
+
+Majority of businesses are rated 3.5 and 4.
+
+Restaruants in Arizona and Nevada had the most reviews in Data Set.
+
+```{r, echo=FALSE, warning=FALSE, include = FALSE }
+library(reshape2)
+library(ggplot2)
+
+
+business <- readRDS("../yelp/business")
+
+
+review <- readRDS("../yelp/review")
+
+
+user <-readRDS ( "../yelp/user")
+
+userattr <- readRDS("../yelp/userattr")
+
+
+MexicanRestaurantBusiness <- readRDS ( "../yelp/MexicanRestaurantBusiness")
+
+user_review <- readRDS ("../yelp/user_review")
+
+
+yelp <- readRDS("../yelp/yelp")
+
+
+filtered <- readRDS("../yelp/filtered")
+```
+
+*** =left
+
+
+```{r img1, echo=FALSE, warning=FALSE , include = FALSE}
+
+
+MexicanRestaurantBusiness$business_stars_bin <- cut ( MexicanRestaurantBusiness$business_stars,
+                                     breaks=c(seq(-1,5, by=1)))
+
+q <- as.data.frame(table ( MexicanRestaurantBusiness$state_name, MexicanRestaurantBusiness$business_stars))
+q <- q [ q$Freq != 0 , ]
+
+##qplot(x=Var2, y=Freq, fill=Var1, data=q, geom="bar", state="identity", 
+##      position="stack", 
+##      main="Mexican Restaurant rating per state" ,
+##      xlab="Restaurant Rating",
+##      ylab="Count of Businesses")
+
+ggp1 <- ggplot( q,aes(x=Var2, y=Freq, fill=Var1, stat="identity"))
+ggp1<- ggp1 + geom_bar( stat="identity")
+ggp1 <- ggp1 + theme(axis.title.x = element_text(face = "bold", size = 15)) 
+ggp1 <- ggp1 + theme(axis.title.y = element_text(face = "bold", size = 15)) 
+ggp1 <- ggp1 + theme(plot.title = element_text(face = "bold", size = 15)) 
+ggp1 <- ggp1 + labs(title="Mexican Restaurant rating per state", 
+                    x="Restaurant Rating", 
+                    y="Count of Businesses")
+
+
+ggp1
+
+
+
+```
+<div style='text-align: center;'>
+    <img height='450' src='assets/fig/img1-1.png' />
+</div>
+
+*** =right
+
+```{r img2, echo=FALSE, warning=FALSE , include = FALSE}
+
+ggp2 <- ggplot(filtered,aes(x=user_reviews_average_star_bin, width=0.5))
+ggp2<- ggp2 + geom_histogram(fill=topo.colors(6),aes(y=..count../sum(..count..)))
+ggp2 <- ggp2 + theme(axis.title.x = element_text(face = "bold", size = 15)) 
+ggp2 <- ggp2 + theme(axis.title.y = element_text(face = "bold", size = 15)) 
+ggp2 <- ggp2 + theme(plot.title = element_text(face = "bold", size = 15)) 
+ggp2 <- ggp2 + labs(title="Mexican Restaurants Reviewer's Average Star", 
+       y="Proportion to Reviews", 
+       x="Reviewer Average Stars")
+
+
+ggp2
+
+
+```
+
+<div style='text-align: center;'>
+    <img height='450' src='assets/fig/img2-1.png' />
+</div>
+
+--- &twocol
+
+###  Mexican Restaurants Reviews
+
+There are 54138 distinct Yelp Users that wrote 95692 reivews for Mexican Restaturants. 
+
+*** =left
+
+Reviewers that gave star rating of 4 for their reviews on average, wrote 80 reviews on average, 33 reviews for 5 star reviewers versus reviewers that gave ratings of 0,1,2 and 3 wrote 23 reviews on average combined. 
+
+Are there words used in 4 and 5 ratings that are not used in 0,1,2, 3 ratings? 
+
+
+*** =right
+
+```{r img3, echo=FALSE, warning=FALSE , include = FALSE}
+## Mexican Restaurant Reviewers: Average Number of Reviews Reviewer writes Per Average Reviewer's stars
+c<- c("user_id")
+q <- unique(filtered[c])
+mexican_reviewer <- merge ( x=userattr, y=q,  by.x="user_id", by.y="user_id")
+a <- aggregate ( user_reviews_count ~ user_reviews_average_star_bin , data = mexican_reviewer, FUN=mean)
+ggp4 <- ggplot(a,aes(x=user_reviews_average_star_bin, y=user_reviews_count, stat="identity"))
+ggp4<- ggp4 + geom_histogram(fill=topo.colors(6), stat="identity")
+ggp4 <- ggp4 + theme(axis.title.x = element_text(face = "bold", size = 15)) 
+ggp4 <- ggp4 + theme(axis.title.y = element_text(face = "bold", size = 15)) 
+ggp4 <- ggp4 + theme(plot.title = element_text(face = "bold", size = 15)) 
+ggp4 <- ggp4 + labs(title="Reviewers of Mexican Restaurant: Number of reviews they wrote", 
+                    y="Average Number of Reviews", 
+                    x="Average Reviewer Star's Rating")
+ggp4
+
+```
+
+<div style='text-align: center;'>
+    <img height='450' src='assets/fig/img3-1.png' />
+</div>
+
+
+--- &twocol
+
+###  WordCloud of Mexican Restaurants Reviews
+
+*** =left
+
+50 most Frequent words used in mexican restaurants rated 4 or 5
+
+Words used frequent: taco, great, place, love, like
+
+```{r corpus4, echo=FALSE , warning=FALSE , include=FALSE}
+data <- filtered
+star <- subset ( data, data$business_stars_bin==levels(data$business_stars_bin)[5] | 
+                       data$business_stars_bin==levels(data$business_stars_bin)[6]
+                 , select=text)
+r <- star
+t <- data.frame(r$text, stringsAsFactors=FALSE)
+corpus <- Corpus(DataframeSource(t))
+corpus <- tm_map(corpus, stripWhitespace)
+corpus <- tm_map(corpus, content_transformer(tolower)) 
+corpus <- tm_map(corpus, removeWords, stopwords("english"))
+corpus <- tm_map(corpus, stemDocument)
+##layout(matrix(c(1, 2), nrow=2), heights=c(1, 4))
+##par(mar=rep(0, 4))
+##plot.new()
+##text(x=0.5, y=0.5, "Frequest Words used in reviews related to Businesses with Star Rating 4 or 5")
+wordcloud(corpus, 
+          scale=c(3,0.5),
+          max.words=50,
+          min.freq=5,
+          random.order=FALSE, 
+          rot.per=0.35,
+          use.r.layout=TRUE,
+          colors=brewer.pal(8, "Dark2")
+)
+
+```
+<div style='text-align: center;'>
+    <img height='560' src='assets/fig/corpus4-1.png' />
+</div>
+
+*** =right
+
+
+50 most frequent words used in mexican restaurants rated 1 or 2 or 3
+
+Words used most: Order, Time, good, like 
+
+```{r corpus5, echo=FALSE , warning=FALSE , include=FALSE}
+data <- filtered
+star <- subset ( data, data$business_stars_bin==levels(data$business_stars_bin)[1] | 
+                       data$business_stars_bin==levels(data$business_stars_bin)[2] |
+                       data$business_stars_bin==levels(data$business_stars_bin)[3] |
+                       data$business_stars_bin==levels(data$business_stars_bin)[4] 
+                   , select=text)
+r <- star
+t <- data.frame(r$text, stringsAsFactors=FALSE)
+corpus <- Corpus(DataframeSource(t))
+corpus <- tm_map(corpus, stripWhitespace)
+corpus <- tm_map(corpus, content_transformer(tolower)) 
+corpus <- tm_map(corpus, removeWords, stopwords("english"))
+corpus <- tm_map(corpus, stemDocument)
+##layout(matrix(c(1, 2), nrow=2), heights=c(1, 4))
+##par(mar=rep(0, 4))
+##plot.new()
+##text(x=0.5, y=0.5, "Frequest Words used in reviews related to Businesses with Star Rating 1 or 2 or 3")
+wordcloud(corpus, 
+          scale=c(3,0.5),
+          max.words=50,
+          min.freq=5,
+          random.order=FALSE, 
+          rot.per=0.35,
+          use.r.layout=TRUE,
+          colors=brewer.pal(8, "Dark2")
+)
+
+```
+
+<div style='text-align: center;'>
+    <img height='560' src='assets/fig/corpus5-1.png' />
+</div>
+
+
+--- 
+
+###  Building a model 
+
+We build a model to  show the frequency of words used across good reviews ( 4/5 Ratings) and bad reviews(0/1/2/3 Ratings)
+
+Created a Corpus of all words in all reviews
+```{r corpus6, echo=TRUE , warning=FALSE}
+data <- filtered
+corpus <- Corpus (VectorSource(data$text))
+corpus <- tm_map(corpus, stripWhitespace)
+corpus <- tm_map(corpus, removePunctuation)
+corpus <- tm_map(corpus, content_transformer(tolower)) 
+corpus <- tm_map(corpus, removeWords, stopwords("english"))
+corpus <- tm_map(corpus, stemDocument)
+```
+Created a Matrix of all words used at least in %3 of all reivews 
+```{r corpus7, echo=TRUE , warning=FALSE}
+dtm = DocumentTermMatrix(corpus)
+sparse = removeSparseTerms(dtm, 0.97) 
+words = as.data.frame(as.matrix(sparse))
+dim(words)
+```
+Seperated our data set to two sets: Training and testing
+```{r model, echo=TRUE , warning=FALSE , cache=TRUE}
+words$review_stars_bin <- data$review_stars_bin
+levels(words$review_stars_bin) <- c ("bad", "bad", "bad", "bad", "good", "good")
+set.seed ( 32343)
+inTrain <- createDataPartition ( y=words$review_stars_bin, p=.75, list =FALSE)
+training <- words[inTrain,]
+testing <- words[-inTrain,]
+```
+
+---
+
+### Model
+
+We run our model. It had 82.3% accuracy
+
+```{r modelfit, echo=TRUE , warning=FALSE , cache=TRUE}
+modelFit <- train(review_stars_bin~., data=training, method="glm")
+predictions <- predict(modelFit, newdata=testing)
+library(gmodels)
+CrossTable(predictions, testing$review_stars_bin, 
+           dnn=c("pridicted" , "Actual") , 
+           prop.t=FALSE, prop.c=FALSE, prop.r=FALSE , prop.chisq = FALSE)
+```
+
+
+--- 
+
+### _Result_
+
+
+Our model identified  some words like _love, favorite, flavor , well, margaritta_ appears in good rating reviews. The word 'good' was used _two times_ more in _good_ reviews compared to _bad_ reviews.
+
+```{r result, echo=FALSE , warning=FALSE , cache=FALSE , include = TRUE }
+agg <- aggregate ( words[,c(1:332)] , by=list(words$review_stars_bin) , FUN=sum)
+names(agg)[1] <- "Rating"
+w <- melt ( agg, id.vars=c("Rating"))
+w <- w [order(-w$value),]
+ggp4 <- ggplot(head(w,100), aes(x=variable, y=value, stat="identity" , colour = Rating))
+ggp4<- ggp4 + geom_bar(width=1, position = position_dodge(width=1))
+ggp4 <- ggp4 + facet_grid(Rating ~ .)
+ggp4 <- ggp4 + theme(axis.text.x = element_text(angle=90,face = "italic", size=10)) 
+ggp4 <- ggp4 + theme(axis.title.x = element_text(face = "bold", size = 15)) 
+ggp4 <- ggp4 + theme(axis.title.y = element_text(face = "bold", size = 15)) 
+ggp4 <- ggp4 + theme(plot.title = element_text(face = "bold", size = 15)) 
+ggp4 <- ggp4 + labs(title="Top 100 most frequent used words in reviews", 
+                    y="word count", 
+                    x="word")
+
+png("assets/fig/result-1.png", width=480*2.2, height=240*2, res=120)
+ggp4
+dev.off()
+
+```
+
+
+
+<div style='text-align: center;'>
+    <img  src='assets/fig/result-1.png' />
+</div>
+

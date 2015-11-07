@@ -1,1 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mexican Restaurant Reviews in Yelp</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Mexican Restaurant Reviews in Yelp">
+  <meta name="author" content="Data Scientist">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+<link rel=stylesheet href="./assets/css/shfont.css"></link>
 
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Mexican Restaurant Reviews in Yelp</h1>
+    <h2>Do words used in Reviews matter in Review's Ratings ?</h2>
+    <p>Data Scientist<br/>Coursera Capstone Project</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h3><em>Mexican Restaurant businesses in Yelp Data set</em></h3>
+  </hgroup>
+  <article data-timings="">
+    <p>There are 95692 reviews for 2208 Mexican Restaurants in Data Set.</p>
+
+<p>Majority of businesses are rated 3.5 and 4.</p>
+
+<p>Restaruants in Arizona and Nevada had the most reviews in Data Set.</p>
+
+<div style='float:left;width:48%;' class='centered'>
+  <div style='text-align: center;'>
+    <img height='450' src='assets/fig/img1-1.png' />
+</div>
+
+</div>
+<div style='float:right;width:48%;'>
+  <div style='text-align: center;'>
+    <img height='450' src='assets/fig/img2-1.png' />
+</div>
+
+</div>
+<div>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h3>Mexican Restaurants Reviews</h3>
+  </hgroup>
+  <article data-timings="">
+    <p>There are 54138 distinct Yelp Users that wrote 95692 reivews for Mexican Restaturants. </p>
+
+<div style='float:left;width:48%;' class='centered'>
+  <p>Reviewers that gave star rating of 4 for their reviews on average, wrote 80 reviews on average, 33 reviews for 5 star reviewers versus reviewers that gave ratings of 0,1,2 and 3 wrote 23 reviews on average combined. </p>
+
+<p>Are there words used in 4 and 5 ratings that are not used in 0,1,2, 3 ratings? </p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <div style='text-align: center;'>
+    <img height='450' src='assets/fig/img3-1.png' />
+</div>
+
+</div>
+<div>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h3>WordCloud of Mexican Restaurants Reviews</h3>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>50 most Frequent words used in mexican restaurants rated 4 or 5</p>
+
+<p>Words used frequent: taco, great, place, love, like</p>
+
+<div style='text-align: center;'>
+    <img height='560' src='assets/fig/corpus4-1.png' />
+</div>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p>50 most frequent words used in mexican restaurants rated 1 or 2 or 3</p>
+
+<p>Words used most: Order, Time, good, like </p>
+
+<div style='text-align: center;'>
+    <img height='560' src='assets/fig/corpus5-1.png' />
+</div>
+
+</div>
+<div>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h3>Building a model</h3>
+  </hgroup>
+  <article data-timings="">
+    <p>We build a model to  show the frequency of words used across good reviews ( 4/5 Ratings) and bad reviews(0/1/2/3 Ratings)</p>
+
+<p>Created a Corpus of all words in all reviews</p>
+
+<pre><code class="r">data &lt;- filtered
+corpus &lt;- Corpus (VectorSource(data$text))
+corpus &lt;- tm_map(corpus, stripWhitespace)
+corpus &lt;- tm_map(corpus, removePunctuation)
+corpus &lt;- tm_map(corpus, content_transformer(tolower)) 
+corpus &lt;- tm_map(corpus, removeWords, stopwords(&quot;english&quot;))
+corpus &lt;- tm_map(corpus, stemDocument)
+</code></pre>
+
+<p>Created a Matrix of all words used at least in %3 of all reivews </p>
+
+<pre><code class="r">dtm = DocumentTermMatrix(corpus)
+sparse = removeSparseTerms(dtm, 0.97) 
+words = as.data.frame(as.matrix(sparse))
+dim(words)
+</code></pre>
+
+<pre><code>## [1] 95692   332
+</code></pre>
+
+<p>Seperated our data set to two sets: Training and testing</p>
+
+<pre><code class="r">words$review_stars_bin &lt;- data$review_stars_bin
+levels(words$review_stars_bin) &lt;- c (&quot;bad&quot;, &quot;bad&quot;, &quot;bad&quot;, &quot;bad&quot;, &quot;good&quot;, &quot;good&quot;)
+set.seed ( 32343)
+inTrain &lt;- createDataPartition ( y=words$review_stars_bin, p=.75, list =FALSE)
+training &lt;- words[inTrain,]
+testing &lt;- words[-inTrain,]
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-5" style="background:;">
+  <hgroup>
+    <h3>Model</h3>
+  </hgroup>
+  <article data-timings="">
+    <p>We run our model. It had 82.3% accuracy</p>
+
+<pre><code class="r">modelFit &lt;- train(review_stars_bin~., data=training, method=&quot;glm&quot;)
+predictions &lt;- predict(modelFit, newdata=testing)
+library(gmodels)
+CrossTable(predictions, testing$review_stars_bin, 
+           dnn=c(&quot;pridicted&quot; , &quot;Actual&quot;) , 
+           prop.t=FALSE, prop.c=FALSE, prop.r=FALSE , prop.chisq = FALSE)
+</code></pre>
+
+<pre><code>## 
+##  
+##    Cell Contents
+## |-------------------------|
+## |                       N |
+## |-------------------------|
+## 
+##  
+## Total Observations in Table:  23922 
+## 
+##  
+##              | Actual 
+##    pridicted |       bad |      good | Row Total | 
+## -------------|-----------|-----------|-----------|
+##          bad |      6183 |      1537 |      7720 | 
+## -------------|-----------|-----------|-----------|
+##         good |      2682 |     13520 |     16202 | 
+## -------------|-----------|-----------|-----------|
+## Column Total |      8865 |     15057 |     23922 | 
+## -------------|-----------|-----------|-----------|
+## 
+## 
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-6" style="background:;">
+  <hgroup>
+    <h3><em>Result</em></h3>
+  </hgroup>
+  <article data-timings="">
+    <p>Our model identified  some words like <em>love, favorite, flavor , well, margaritta</em> appears in good rating reviews. The word &#39;good&#39; was used <em>two times</em> more in <em>good</em> reviews compared to <em>bad</em> reviews.</p>
+
+<pre><code>## png 
+##   2
+</code></pre>
+
+<div style='text-align: center;'>
+    <img  src='assets/fig/result-1.png' />
+</div>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='<em>Mexican Restaurant businesses in Yelp Data set</em>'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Mexican Restaurants Reviews'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='WordCloud of Mexican Restaurants Reviews'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Building a model'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='Model'>
+         5
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=6 title='<em>Result</em>'>
+         6
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
