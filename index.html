@@ -149,7 +149,7 @@ corpus &lt;- tm_map(corpus, removeWords, stopwords(&quot;english&quot;))
 corpus &lt;- tm_map(corpus, stemDocument)
 </code></pre>
 
-<p>Created a Matrix of all words used at least in %3 of all reivews </p>
+<p>Created a Matrix of 95692 * 333 for 333 words used at least in %3 of all 95692  reivews </p>
 
 <pre><code class="r">dtm = DocumentTermMatrix(corpus)
 sparse = removeSparseTerms(dtm, 0.97) 
@@ -222,11 +222,7 @@ CrossTable(predictions, testing$review_stars_bin,
     <h3><em>Result</em></h3>
   </hgroup>
   <article data-timings="">
-    <p>Our model identified  some words like <em>love, favorite, flavor , well, margaritta</em> appears in good rating reviews. The word &#39;good&#39; was used <em>two times</em> more in <em>good</em> reviews compared to <em>bad</em> reviews.</p>
-
-<pre><code>## png 
-##   2
-</code></pre>
+    <p>Our model identified  some words like <em>love, favorite, flavor , well, margaritta</em> appear ONLY in &quot;good&quot; rating reviews. The word &#39;good&#39; was used <em>two times</em> more in &quot;good&quot; rating reviews compared to &quot;bad&quot; rating reviews.</p>
 
 <div style='text-align: center;'>
     <img  src='assets/fig/result-1.png' />
