@@ -56,20 +56,16 @@ Reviewers that gave star rating of 4 for their reviews on average, wrote 80 revi
 Are there words used in 4 and 5 ratings that are not used in 0,1,2, 3 ratings? 
 
 
-*** =right
+
 
 
 
 <div style='text-align: center;'>
-    <img height='450' src='assets/fig/img3-1.png' />
+    <img height='400' src='assets/fig/img3-1.png' />
 </div>
 
 
---- &twocol
-
-###  WordCloud of Mexican Restaurants Reviews
-
-*** =left
+*** =right
 
 50 most Frequent words used in mexican restaurants rated 4 or 5
 
@@ -77,10 +73,8 @@ Words used frequent: taco, great, place, love, like
 
 
 <div style='text-align: center;'>
-    <img height='560' src='assets/fig/corpus4-1.png' />
+    <img height='210' src='assets/fig/wordcloud_corpus4.png' />
 </div>
-
-*** =right
 
 
 50 most frequent words used in mexican restaurants rated 1 or 2 or 3
@@ -88,15 +82,14 @@ Words used frequent: taco, great, place, love, like
 Words used most: Order, Time, good, like 
 
 
-
 <div style='text-align: center;'>
-    <img height='560' src='assets/fig/corpus5-1.png' />
+<img height='210' src='assets/fig/wordcloud_corpus5.png' />
 </div>
-
 
 --- 
 
 ###  Building a model 
+
 We build a model to  show the frequency of words used across good reviews ( 4/5 Ratings) and bad reviews(0/1/2/3 Ratings)
 
 

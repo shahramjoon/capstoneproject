@@ -84,10 +84,26 @@
 
 <p>Are there words used in 4 and 5 ratings that are not used in 0,1,2, 3 ratings? </p>
 
+<div style='text-align: center;'>
+    <img height='400' src='assets/fig/img3-1.png' />
+</div>
+
 </div>
 <div style='float:right;width:48%;'>
-  <div style='text-align: center;'>
-    <img height='450' src='assets/fig/img3-1.png' />
+  <p>50 most Frequent words used in mexican restaurants rated 4 or 5</p>
+
+<p>Words used frequent: taco, great, place, love, like</p>
+
+<div style='text-align: center;'>
+    <img height='210' src='assets/fig/wordcloud_corpus4.png' />
+</div>
+
+<p>50 most frequent words used in mexican restaurants rated 1 or 2 or 3</p>
+
+<p>Words used most: Order, Time, good, like </p>
+
+<div style='text-align: center;'>
+<img height='210' src='assets/fig/wordcloud_corpus5.png' />
 </div>
 
 </div>
@@ -99,39 +115,6 @@
 </slide>
 
 <slide class="" id="slide-3" style="background:;">
-  <hgroup>
-    <h3>WordCloud of Mexican Restaurants Reviews</h3>
-  </hgroup>
-  <article data-timings="">
-    
-<div style='float:left;width:48%;' class='centered'>
-  <p>50 most Frequent words used in mexican restaurants rated 4 or 5</p>
-
-<p>Words used frequent: taco, great, place, love, like</p>
-
-<div style='text-align: center;'>
-    <img height='560' src='assets/fig/corpus4-1.png' />
-</div>
-
-</div>
-<div style='float:right;width:48%;'>
-  <p>50 most frequent words used in mexican restaurants rated 1 or 2 or 3</p>
-
-<p>Words used most: Order, Time, good, like </p>
-
-<div style='text-align: center;'>
-    <img height='560' src='assets/fig/corpus5-1.png' />
-</div>
-
-</div>
-<div>
-  
-</div>
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="" id="slide-4" style="background:;">
   <hgroup>
     <h3>Building a model</h3>
   </hgroup>
@@ -174,7 +157,7 @@ testing &lt;- words[-inTrain,]
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-5" style="background:;">
+<slide class="" id="slide-4" style="background:;">
   <hgroup>
     <h3>Model</h3>
   </hgroup>
@@ -217,7 +200,7 @@ CrossTable(predictions, testing$review_stars_bin,
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-6" style="background:;">
+<slide class="" id="slide-5" style="background:;">
   <hgroup>
     <h3><em>Result</em></h3>
   </hgroup>
@@ -250,26 +233,20 @@ CrossTable(predictions, testing$review_stars_bin,
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=3 title='WordCloud of Mexican Restaurants Reviews'>
+        data-slide=3 title='Building a model'>
          3
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=4 title='Building a model'>
+        data-slide=4 title='Model'>
          4
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=5 title='Model'>
+        data-slide=5 title='<em>Result</em>'>
          5
-      </a>
-    </li>
-    <li>
-      <a href="#" target="_self" rel='tooltip' 
-        data-slide=6 title='<em>Result</em>'>
-         6
       </a>
     </li>
   </ul>
